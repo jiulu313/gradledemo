@@ -1,26 +1,52 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
+
     repositories {
         google()
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
-        
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
+/**
+ * 配置当前结点工程和它的所有的所有的subproject
+ * 比如将所有的project的group配置为 'com.zhj'
+ */
 allprojects {
     repositories {
         google()
         jcenter()
     }
+
+    group 'com.zhj'
 }
+
+//测试在allprojects中配置的group属性
+println "test工程的group是 ： " + project('test').group
+
+
+
+/**
+ * 和allprojects不同的是，subprojects不包括当前工程，只包括子project
+ */
+subprojects { Project project ->
+    if(project.hasProperty('com.android.library')){
+        //将库工程编译的库上传到maven中
+    }
+}
+
+
+
+
+
+
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir
@@ -47,7 +73,6 @@ this.gradle.buildFinished {
     println '执行阶段执行完毕...'
 }
 
-
 //等同于 beforeEvaluate
 this.gradle.beforeProject {
 
@@ -58,10 +83,79 @@ this.gradle.afterProject {
     println '配置阶段执行完毕333...'
 }
 
+//调用方法
+//getProjects()
+
+//获取所有的project
+def getProjects() {
+    println '------------'
+    println 'Root Project'
+    println '------------'
+
+    //getAllprojects()返回所有的Project的set集合
+    this.getAllprojects().eachWithIndex { Project project, int index ->
+        if (index == 0) {
+            println "Root protject :'${project.name}'"
+        } else {
+            println "+--- project '${project.name}'"
+        }
+    }
+}
+
+//打印所有的子project
+getAllSubprojects()
+
+def getAllSubprojects() {
+    getSubprojects().each { project ->
+        println "---- ${project.name}"
+    }
+}
+
+//获取根project的名字，在根project中调用返回null,在子project下调用打印出父project的名字
+getParentProjectName()
+
+def getParentProjectName() {
+    def project = getParent()
+    if (project != null) {
+        println "父project的名字是: " + project.name
+    } else {
+        println '没有父project'
+    }
+}
 
 
+getRootPro()
+
+def getRootPro() {
+    println "根project的名字是：" + getRootProject().name
+}
+
+/**
+ * 可以在根project下对所有的子project进行配置，如下代码
+ * 任何在子project中的build.gradle文件中可以配置的东西
+ * 都可以在下面的代码中进行配置
+ */
+
+project("app") {
+    apply plugin: 'com.android.application'
+    group 'com.zhj'
+    version '1.0.0'
+
+    dependencies {
+
+    }
+
+    android {
+
+    }
+}
 
 
+project('mylib') {
+    apply plugin: 'com.android.library'
+    group 'com.zhj'
+    version '1.1.1'
+    dependencies {
 
-
-
+    }
+}
