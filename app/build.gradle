@@ -28,12 +28,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
-
-
 //第一种方法，直接使用project的task()方法创建
 //配置的时候就配置task的group和description
 //description就是个说明，类似对注释
-task helloTask(group:'hard',description:'task learn'){
+task helloTask(group: 'hard', description: 'task learn') {
 
 
     println 'this is helloTask' //直接写在闭包里面的，是在配置阶段就执行的
@@ -47,7 +45,6 @@ task helloTask(group:'hard',description:'task learn'){
         println 'task in do last'   //运行任务时，会最后一个执行
     }
 }
-
 
 /*
 //第二种方法，使用TaskContainer创建task
@@ -78,18 +75,40 @@ this.afterEvaluate { Project project ->
     }
 }
 
+task taskC{
+    doLast{
+        println '我是taskC'
+    }
+}
 
 
+task taskB {
+    doLast {
+        println '我是taskB'
+    }
+}
+
+//定义一个taskA
+task taskA(dependsOn:['taskB','taskC']) {
+    doLast {
+        println '我是taskA'
+    }
+}
+
+//定义之后，再依赖于taskB
+//taskA.dependsOn 'taskB','taskC'
+
+task(name:'hello'){
+    doLast{
+        printn '这是hello task。。。'
+    }
+}
 
 
-
-
-
-
-
-
-
-
+testExtension{
+    message 'hello,Gradle!!!234556'
+    address '北京市长安大街33号'
+}
 
 
 

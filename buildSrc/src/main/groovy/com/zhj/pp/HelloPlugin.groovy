@@ -15,6 +15,14 @@ class HelloPlugin implements Plugin<Project>{
      */
     @Override
     void apply(Project project) {
-        println 'hello plugin ... ' + project.name
+        def extension = project.extensions.create('testExtension', TestPluginExtension)
+        def extension2 = project.extensions.getByName('testExtension')
+
+        project.tasks.create('taskPlugin'){
+            doLast{
+                println extension2.message
+                println extension.address
+            }
+        }
     }
 }
